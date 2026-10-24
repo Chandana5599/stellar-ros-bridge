@@ -1,0 +1,18 @@
+[package]
+name = "example-robot"
+description = "A simulated robot TaskExecutor and runnable robot-side demo for Stellar ROS Bridge."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+bridge-core = { workspace = true }
+ros-bridge = { workspace = true }
+serde_json = { workspace = true }
+sha2 = "0.10"
+
+[[bin]]
+name = "simulated-robot"
+path = "src/bin/simulated_robot.rs"

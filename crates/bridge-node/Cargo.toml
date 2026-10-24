@@ -10,5 +10,14 @@ rust-version.workspace = true
 [dependencies]
 bridge-core = { workspace = true }
 ros-bridge = { workspace = true }
+serde_json = { workspace = true }
 stellar-bridge = { workspace = true }
 tracing = { workspace = true }
+axum = "0.7"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net"] }
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+
+[package.metadata.docs.rs]
+all-features = true

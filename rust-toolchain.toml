@@ -1,5 +1,6 @@
 [toolchain]
-channel = "1.83.0"
+channel = "stable"
 components = ["rustfmt", "clippy"]
-targets = ["wasm32-unknown-unknown"]
+# Soroban contracts must be built for wasm32v1-none (see the contracts job).
+targets = ["wasm32v1-none"]
 profile = "minimal"

@@ -1,6 +1,6 @@
 [package]
 name = "ros-bridge"
-description = "ROS 2 integration for Stellar ROS Bridge, built on rclrs."
+description = "ROS 2 integration for Stellar ROS Bridge."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -8,10 +8,17 @@ repository.workspace = true
 rust-version.workspace = true
 
 [features]
-# Enabling `ros` pulls in rclrs and requires a sourced ROS 2 environment.
-# Implemented by the "ROS 2 rclrs transport" Wave issue.
-default = []
-ros = []
+default = ["rosbridge"]
+rosbridge = ["dep:tungstenite"]
+ros = ["dep:rclrs"]
 
 [dependencies]
 bridge-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = "0.9"
+tungstenite = { version = "0.29", optional = true }
+rclrs = { version = "0.8", optional = true }
+
+[package.metadata.docs.rs]
+all-features = true

@@ -6,6 +6,7 @@ on:
   pull_request:
 
 env:
+  RUSTUP_TOOLCHAIN: stable
   CARGO_TERM_COLOR: always
   RUSTFLAGS: -D warnings
 
@@ -24,20 +25,61 @@ jobs:
       - run: cargo clippy --workspace --all-targets -- -D warnings
       - run: cargo test --workspace
 
-  # ROS-facing crates need a ROS 2 environment. This job is present so the
-  # pipeline is ready for it, but is disabled until the bridge node lands.
-  ros:
-    name: ros (ROS 2 Jazzy)
+  # Unit tests plus a deployable wasm build for the escrow contract.
+  contracts:
+    name: task-escrow (fmt, clippy, test, wasm)
     runs-on: ubuntu-latest
-    if: false
+    defaults:
+      run:
+        working-directory: contracts/task-escrow
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32v1-none
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: contracts/task-escrow
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test
+      - name: Build deployable wasm
+        env:
+          SOROBAN_SDK_BUILD_SYSTEM_SUPPORTS_SPEC_SHAKING_V2: "1"
+        run: cargo build --release --target wasm32v1-none
+
+  # The rclrs transport can only be compiled with a sourced ROS 2 environment.
+  # This job is the only place that verifies that code path; it has not been
+  # run locally in an environment without ROS 2.
+  ros:
+    name: ros (ROS 2 Jazzy, rclrs)
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: jazzy
       - uses: dtolnay/rust-toolchain@stable
-      - name: Build ros-bridge
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Build and test rclrs transport
         shell: bash
         run: |
           source /opt/ros/jazzy/setup.bash
-          cargo build -p ros-bridge
+          cargo build -p ros-bridge --features ros
+          cargo build -p ros-bridge --features ros --examples
+          cargo test -p ros-bridge --features ros --lib
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    env:
+      RUSTDOCFLAGS: "-D warnings -D rustdoc::broken_intra_doc_links"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build documentation
+        run: cargo doc --workspace --no-deps

@@ -7,7 +7,18 @@ license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
+[[bin]]
+name = "stellar-testnet-smoke"
+path = "src/bin/testnet_smoke.rs"
+
 [dependencies]
 bridge-core = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
 thiserror = { workspace = true }
+soroban-client = "0.6"
+stellar-strkey = "0.0.15"
+tokio = { version = "1", features = ["rt-multi-thread", "time", "net", "io-util"] }
+
+[package.metadata.docs.rs]
+all-features = true

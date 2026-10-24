@@ -5,6 +5,7 @@ members = [
     "crates/ros-bridge",
     "crates/stellar-bridge",
     "crates/bridge-node",
+    "crates/example-robot",
 ]
 default-members = [
     "crates/bridge-core",
@@ -16,7 +17,7 @@ version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/Primex-tech-labs/stellar-ros-bridge"
-rust-version = "1.83"
+rust-version = "1.85"
 authors = ["Primex Tech Labs"]
 
 [workspace.dependencies]

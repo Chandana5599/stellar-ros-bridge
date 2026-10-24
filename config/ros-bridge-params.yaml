@@ -1,0 +1,6 @@
+﻿/**:
+  ros__parameters:
+    capabilities_topic: /robot/capabilities
+    tasks_topic: /robot/tasks
+    proofs_topic: /robot/proofs
+    ros_domain_id: 0
